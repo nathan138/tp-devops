@@ -156,7 +156,24 @@ curl localhost:8080                       # échoue : backend non exposé
 
 ### Publish
 
-**1-9 Commandes de publication** : *à compléter.*
+**1-9 Commandes de publication et images publiées**
+```bash
+docker login
+docker tag tp1-database nathank04/tp1-database:1.0
+docker tag tp1-backend  nathank04/tp1-backend:1.0
+docker tag tp1-httpd    nathank04/tp1-httpd:1.0
+docker push nathank04/tp1-database:1.0
+docker push nathank04/tp1-backend:1.0
+docker push nathank04/tp1-httpd:1.0
+```
+Images publiées sur Docker Hub (compte `nathank04`) :
+| Image | Tag | Taille |
+|---|---|---|
+| [nathank04/tp1-database](https://hub.docker.com/r/nathank04/tp1-database) | 1.0 | ~111 Mo |
+| [nathank04/tp1-backend](https://hub.docker.com/r/nathank04/tp1-backend) | 1.0 | ~123 Mo |
+| [nathank04/tp1-httpd](https://hub.docker.com/r/nathank04/tp1-httpd) | 1.0 | ~23 Mo |
+
+Le tag `1.0` donne une version explicite à l'image (au lieu de `latest`), ce qui permet de savoir exactement quelle version est déployée et de revenir en arrière.
 
 **1-10 Pourquoi mettre nos images dans un registre en ligne ?**
 Pour les partager avec l'équipe et les déployer sur d'autres machines (serveurs, CI/CD) sans rebuild : on récupère exactement la même image versionnée (tag) partout. Le registre sert aussi d'historique des versions et permet de revenir à une version précédente.
