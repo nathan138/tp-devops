@@ -25,6 +25,11 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean verify --file tp1/backend/simple-api/pom.xml
 
+      # analyse la qualite du code avec SonarCloud (bugs, failles, duplications, couverture JaCoCo)
+      # le token est lu dans les secrets GitHub, jamais ecrit en clair
+      - name: SonarCloud analysis
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=nathan138_tp-devops -Dsonar.organization=nathan138 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} --file ./tp1/backend/simple-api/pom.xml
+
   # construit les 3 images Docker et les publie sur Docker Hub
   build-and-push-docker-image:
     # attend que le job test-backend soit vert avant de demarrer

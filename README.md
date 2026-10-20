@@ -208,3 +208,12 @@ Pour que l'image validée par le CI soit disponible ailleurs que dans la VM qui 
 - `needs: test-backend` : la question du sujet parle de `build-and-test-backend`, mais le job du modèle s'appelle `test-backend`.
 - `push: ${{ github.ref == 'refs/heads/master' }}` au lieu de `refs/heads/main` : la branche du repo s'appelle `master`.
 - Noms des images base et httpd choisis sur le modèle de `tp-devops-simple-api` : `tp-devops-database`, `tp-devops-httpd`.
+
+
+### Setup Quality Gate
+
+Analyse de qualité avec SonarCloud (organisation `nathan138`, projet `nathan138_tp-devops`) : une étape `SonarCloud analysis` ajoutée dans le job `test-backend`, juste après `Build and test with Maven`. Elle lance `mvn -B verify sonar:sonar` et envoie le rapport (bugs, vulnérabilités, code smells, duplications, couverture JaCoCo) à SonarCloud. Le token est stocké dans le secret GitHub `SONAR_TOKEN`. L'analyse automatique de SonarCloud est désactivée, sinon elle entre en conflit avec l'analyse lancée par le CI.
+
+Le Quality Gate (« Sonar way » par défaut) définit les seuils à respecter sur le nouveau code (couverture, bugs, failles, duplications) : s'il échoue, le code n'est pas jugé assez bon pour être livré.
+
+Écart : `--file ./tp1/backend/simple-api/pom.xml` au lieu de `./simple-api/pom.xml`, le `pom.xml` n'est pas à la racine du repo.
