@@ -177,3 +177,6 @@ Le tag `1.0` donne une version explicite à l'image (au lieu de `latest`), ce qu
 
 **1-10 Pourquoi mettre nos images dans un registre en ligne ?**
 Pour les partager avec l'équipe et les déployer sur d'autres machines (serveurs, CI/CD) sans rebuild : on récupère exactement la même image versionnée (tag) partout. Le registre sert aussi d'historique des versions et permet de revenir à une version précédente.
+
+
+##TD2
