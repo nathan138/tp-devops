@@ -218,3 +218,4 @@ Le Quality Gate (« Sonar way » par défaut) définit les seuils à respecter s
 
 Écart : `--file ./tp1/backend/simple-api/pom.xml` au lieu de `./simple-api/pom.xml`, le `pom.xml` n'est pas à la racine du repo.
 Écart : `org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar` au lieu de `sonar:sonar`. Avec le raccourci du sujet, Maven échoue avec « No plugin found for prefix 'sonar' » : il faut donner le nom complet du plugin SonarScanner.
+Écart : `-Dsonar.token` au lieu de `-Dsonar.login` : `sonar.login` est l'ancien nom (déprécié) du paramètre d'authentification.

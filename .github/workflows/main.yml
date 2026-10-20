@@ -29,7 +29,7 @@ jobs:
       # le token est lu dans les secrets GitHub, jamais ecrit en clair
       # plugin appele par son nom complet : le raccourci "sonar:sonar" n'est pas reconnu par Maven ici
       - name: SonarCloud analysis
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar.projectKey=nathan138_tp-devops -Dsonar.organization=nathan138 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} --file ./tp1/backend/simple-api/pom.xml
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar.projectKey=nathan138_tp-devops -Dsonar.organization=nathan138 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }} --file ./tp1/backend/simple-api/pom.xml
 
   # construit les 3 images Docker et les publie sur Docker Hub
   build-and-push-docker-image:
