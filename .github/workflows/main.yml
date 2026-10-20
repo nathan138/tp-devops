@@ -1,0 +1,26 @@
+name: CI devops 2025
+on:
+  # lance le pipeline a chaque push sur ces branches
+  push:
+    branches: [ master, develop ]
+  # et a chaque pull request
+  pull_request:
+
+jobs:
+  test-backend:
+    # machine virtuelle Linux fournie par GitHub
+    runs-on: ubuntu-24.04
+    steps:
+      # recupere le code du repo dans la machine
+      - uses: actions/checkout@v4
+
+      # installe Java 21 (distribution Temurin, la meme que dans les Dockerfiles)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # compile et lance les tests unitaires + integration (Testcontainers lance PostgreSQL)
+      - name: Build and test with Maven
+        run: mvn clean verify --file tp1/backend/simple-api/pom.xml

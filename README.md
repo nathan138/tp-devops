@@ -179,4 +179,16 @@ Le tag `1.0` donne une version explicite à l'image (au lieu de `latest`), ce qu
 Pour les partager avec l'équipe et les déployer sur d'autres machines (serveurs, CI/CD) sans rebuild : on récupère exactement la même image versionnée (tag) partout. Le registre sert aussi d'historique des versions et permet de revenir à une version précédente.
 
 
-##TD2
+## TP part 02 — GitHub Actions
+
+### First steps into the CI World
+
+**2-1 What are testcontainers?**
+Testcontainers : des bibliothèques Java qui lancent de vrais conteneurs Docker pendant les tests. Ici, les tests d'intégration démarrent un conteneur PostgreSQL temporaire, y insèrent les données de test, puis le suppriment à la fin. On teste donc contre une vraie base, sans en installer une, et chaque exécution repart d'une base propre.
+
+Pipeline : `.github/workflows/main.yml` (job `test-backend`, lancé à chaque push sur `master`/`develop` et à chaque pull request) : checkout du code, installation de Java 21, puis `mvn clean verify --file tp1/backend/simple-api/pom.xml`.
+
+Écarts par rapport au sujet :
+- `branches: [ master, develop ]` au lieu de `main` : la branche du repo s'appelle `master`.
+- `--file tp1/backend/simple-api/pom.xml` : le `pom.xml` n'est pas à la racine du repo.
+- Testcontainers monté de 1.20.4 à 1.21.4 dans le `pom.xml` : la 1.20.4 ne fonctionne pas avec Docker 29 (erreur « Could not find a valid Docker environment »).
