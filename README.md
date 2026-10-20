@@ -192,3 +192,19 @@ Pipeline : `.github/workflows/main.yml` (job `test-backend`, lancé à chaque pu
 - `branches: [ master, develop ]` au lieu de `main` : la branche du repo s'appelle `master`.
 - `--file tp1/backend/simple-api/pom.xml` : le `pom.xml` n'est pas à la racine du repo.
 - Testcontainers monté de 1.20.4 à 1.21.4 dans le `pom.xml` : la 1.20.4 ne fonctionne pas avec Docker 29 (erreur « Could not find a valid Docker environment »).
+
+### First steps into the CD World
+
+**2-2 For what purpose do we need to use secured variables?**
+Pour que le pipeline puisse se connecter à Docker Hub sans écrire les identifiants dans le code : le repo est public et tout ce qui est commité reste dans l'historique git. Les secrets GitHub sont chiffrés, lisibles seulement par le pipeline, et masqués (`***`) dans les logs.
+
+**2-3 Why did we put `needs: test-backend` on this job?**
+Sans `needs`, les jobs tournent en parallèle : les images seraient construites et publiées même si les tests échouent. Avec `needs`, le job des images attend que les tests soient verts, et ne se lance pas s'ils échouent.
+
+**2-4 For what purpose do we need to push docker images?**
+Pour que l'image validée par le CI soit disponible ailleurs que dans la VM qui l'a construite (et qui est détruite à la fin du job) : un serveur peut faire `docker pull` et lancer exactement cette version, sans recompiler. Docker Hub garde aussi l'historique des versions livrées.
+
+Écarts :
+- `needs: test-backend` : la question du sujet parle de `build-and-test-backend`, mais le job du modèle s'appelle `test-backend`.
+- `push: ${{ github.ref == 'refs/heads/master' }}` au lieu de `refs/heads/main` : la branche du repo s'appelle `master`.
+- Noms des images base et httpd choisis sur le modèle de `tp-devops-simple-api` : `tp-devops-database`, `tp-devops-httpd`.

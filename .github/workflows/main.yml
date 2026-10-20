@@ -24,3 +24,44 @@ jobs:
       # compile et lance les tests unitaires + integration (Testcontainers lance PostgreSQL)
       - name: Build and test with Maven
         run: mvn clean verify --file tp1/backend/simple-api/pom.xml
+
+  # construit les 3 images Docker et les publie sur Docker Hub
+  build-and-push-docker-image:
+    # attend que le job test-backend soit vert avant de demarrer
+    needs: test-backend
+    runs-on: ubuntu-24.04
+    steps:
+      # chaque job a sa propre VM : il faut refaire le checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # connexion a Docker Hub avec les secrets GitHub (token passe par stdin, jamais en clair)
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      # image du backend (Dockerfile multistage du TP1)
+      - name: Build image and push backend
+        uses: docker/build-push-action@v6
+        with:
+          # dossier qui contient le Dockerfile
+          context: ./tp1/backend/simple-api
+          # le tag doit etre en minuscules
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
+          # build sur toutes les branches, publie seulement depuis master
+          push: ${{ github.ref == 'refs/heads/master' }}
+
+      # image de la base PostgreSQL
+      - name: Build image and push database
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tp1/database
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
+
+      # image du reverse proxy httpd
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tp1/http-server
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
