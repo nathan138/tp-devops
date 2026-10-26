@@ -1,4 +1,7 @@
 .env
 
+# mot de passe BDD pour les lancements Ansible en local (en CI : secret GitHub)
+ansible/inventories/group_vars/all/secrets.yml
+
 # Maven build output
 target/

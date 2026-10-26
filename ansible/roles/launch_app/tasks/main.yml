@@ -1,0 +1,16 @@
+---
+- name: Run backend API
+  community.docker.docker_container:
+    name: backend
+    image: nathank04/tp-devops-simple-api:latest
+    pull: true
+    env:
+      DB_URL: "jdbc:postgresql://database:5432/{{ postgres_db }}"
+      DB_USER: "{{ postgres_user }}"
+      DB_PASSWORD: "{{ postgres_password }}"
+    networks:
+      - name: back-network
+      - name: front-network
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python3

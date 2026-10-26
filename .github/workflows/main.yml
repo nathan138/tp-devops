@@ -71,3 +71,43 @@ jobs:
           context: ./tp1/http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: ${{ github.ref == 'refs/heads/master' }}
+
+  # deploie les nouvelles images sur le serveur avec le playbook Ansible
+  deploy:
+    # attend que les images soient publiees sur Docker Hub
+    needs: build-and-push-docker-image
+    # les images ne sont publiees que depuis master : on ne deploie que depuis master
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # memes versions qu'en local : community.docker 3.x (fourni avec ansible-core 2.16)
+      # est incompatible avec la lib requests recente du venv docker du serveur
+      - name: Install Ansible
+        run: |
+          pipx install "ansible-core==2.16.*"
+          ansible-galaxy collection install "community.docker:>=4.0.0,<5.0.0"
+
+      # la cle privee vient des secrets GitHub, jamais du repo
+      # ssh-keyscan enregistre l'empreinte du serveur pour eviter la question "yes/no" de SSH
+      - name: Set up SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H nathan.klieber.takima.school >> ~/.ssh/known_hosts
+
+      # -e surcharge le chemin de la cle de l'inventaire (celui de WSL n'existe pas ici)
+      # et fournit le mot de passe BDD, absent du repo
+      - name: Deploy with Ansible
+        working-directory: ./ansible
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: >
+          ansible-playbook -i inventories/setup.yml playbook.yml
+          -e ansible_ssh_private_key_file=$HOME/.ssh/id_rsa
+          -e "postgres_password=$POSTGRES_PASSWORD"

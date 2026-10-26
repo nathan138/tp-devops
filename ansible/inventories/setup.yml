@@ -1,0 +1,10 @@
+all:
+  vars:
+    ansible_user: admin
+    ansible_ssh_private_key_file: /home/nathan/.ssh/id_rsa_takima
+    postgres_db: db
+    postgres_user: usr
+    # postgres_password n'est pas commite : group_vars/all/secrets.yml en local, secret GitHub en CI
+  children:
+    prod:
+      hosts: nathan.klieber.takima.school

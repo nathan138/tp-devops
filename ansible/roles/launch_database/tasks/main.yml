@@ -1,0 +1,17 @@
+---
+- name: Run database
+  community.docker.docker_container:
+    name: database
+    image: nathank04/tp-devops-database:latest
+    pull: true
+    env:
+      POSTGRES_DB: "{{ postgres_db }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+    networks:
+      - name: back-network
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python3

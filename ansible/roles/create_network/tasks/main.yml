@@ -1,0 +1,14 @@
+---
+# Network between the API and the database (not reachable by the proxy)
+- name: Create back network
+  community.docker.docker_network:
+    name: back-network
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python3
+
+# Network between the proxy and the API
+- name: Create front network
+  community.docker.docker_network:
+    name: front-network
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python3
