@@ -1,0 +1,12 @@
+---
+# front Vue.js servi par nginx : pas de port expose, accessible uniquement via httpd
+- name: Run front
+  community.docker.docker_container:
+    name: front
+    image: nathank04/tp-devops-front:latest
+    pull: true
+    networks:
+      - name: front-network
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python3

@@ -64,6 +64,14 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
           push: ${{ github.ref == 'refs/heads/master' }}
 
+      # image du front Vue.js (build node puis nginx), avant httpd qui le reference
+      - name: Build image and push front
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tp1/front
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-front:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
+
       # image du reverse proxy httpd
       - name: Build image and push httpd
         uses: docker/build-push-action@v6

@@ -26,6 +26,13 @@ services:
             - db-data:/var/lib/postgresql/data
         restart: unless-stopped
 
+    front:
+        build: ./front
+        container_name: front
+        networks:
+            - front-network
+        restart: unless-stopped
+
     httpd:
         build: ./http-server
         container_name: httpd
@@ -35,6 +42,7 @@ services:
             - front-network
         depends_on:
             - backend
+            - front
         restart: unless-stopped
 
 networks:
