@@ -87,9 +87,12 @@ jobs:
       # est incompatible avec la lib requests recente du venv docker du serveur
       - name: Install Ansible
         run: |
-          # --force : le runner a deja une autre version d'ansible-core preinstallee
-          pipx install --force "ansible-core==2.16.*"
-          ansible-galaxy collection install "community.docker:>=4.0.0,<5.0.0"
+          # venv dedie : le runner a deja une autre version d'ansible-core, non modifiable
+          python3 -m venv ~/ansible-venv
+          ~/ansible-venv/bin/pip install "ansible-core==2.16.*"
+          ~/ansible-venv/bin/ansible-galaxy collection install "community.docker:>=4.0.0,<5.0.0"
+          # place ce venv en tete du PATH pour les etapes suivantes
+          echo "$HOME/ansible-venv/bin" >> "$GITHUB_PATH"
 
       # la cle privee vient des secrets GitHub, jamais du repo
       # ssh-keyscan enregistre l'empreinte du serveur pour eviter la question "yes/no" de SSH
